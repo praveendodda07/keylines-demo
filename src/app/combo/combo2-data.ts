@@ -4675,19 +4675,6 @@ export const data: ChartData = {
   ],
 };
 
-/**
- * entity -> shipment -> fa-ship
- * catalogType -> S -> P -> D
- * entityType -> unknown
- * shipment -> fa-truck
- * organization -> fa-sitemap
- * assets -> fa-boxes
- */
-export const shipmentData: ChartData = {
-  type: 'LinkChart',
-  items: [],
-};
-
 function getUserData() {
   const user = 'N365';
   const nodes = data.items.filter((item) => item.id == user);

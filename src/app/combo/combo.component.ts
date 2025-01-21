@@ -26,7 +26,7 @@ import {
   countryComboArrangement,
   countryAliases,
 } from './combo2-data.js';
-interface Events {
+export interface Events {
   name: keyof ChartEventHandlers;
   args: ChartAllEventProps;
 }
