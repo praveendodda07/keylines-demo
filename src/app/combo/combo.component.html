@@ -1,11 +1,15 @@
-<div class="chart-wrapper demo-cols">
-  <div class="tab-content-panel flex1" id="lhs" data-tab-group="rhs">
+<div class="chart-wrapper demo-cols" style="display: flex">
+  <div
+    class="tab-content-panel flex1"
+    id="lhs"
+    data-tab-group="rhs"
+    style="flex-grow: 1"
+  >
     <div
       class="toggle-content is-visible"
       id="lhsVisual"
-      style="width: 100%; height: 800px"
+      style="height: calc(100vh - 40px); border: 1px solid red"
     >
-      <!-- <div class="klchart" id="klchart"></div> -->
       <kl-components (klReady)="klChartReady($event)">
         <kl-component
           class="flex1"
@@ -18,7 +22,7 @@
       </kl-components>
     </div>
   </div>
-  <div class="rhs citext closed" id="demorhscontent">
+  <div style="width: 200px" class="rhs citext closed" id="demorhscontent">
     <div class="title-bar">
       <svg
         viewBox="0 0 360 60"

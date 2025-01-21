@@ -1,15 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import type {
   Chart,
-  TimeBar,
-  TimeBarOptions,
   ChartOptions,
   ChartAllEventProps,
   ChartPointerEventProps,
-  SelectionOptions,
-  LayoutOptions,
-  TimeBarAllEventProps,
   ImageAlignmentOptions,
   IdMap,
   Graph,
@@ -19,10 +14,10 @@ import type {
   ChartEventHandlers,
   CombineOptions,
   ComboArrangement,
+  Glyph,
+  LinkProperties,
 } from 'keylines';
-// import the KeyLines components
 
-// import { chartData, timebarData } from '../data';
 import {
   data,
   getRegion,
@@ -31,7 +26,6 @@ import {
   countryComboArrangement,
   countryAliases,
 } from './combo2-data.js';
-// declare const WebFont: any;
 interface Events {
   name: keyof ChartEventHandlers;
   args: ChartAllEventProps;
@@ -47,14 +41,12 @@ export class Tooltip {
   ) {}
 }
 
-declare const WebFont: any;
-
 @Component({
   selector: 'app-combo',
   templateUrl: './combo.component.html',
   styleUrl: './combo.component.scss',
 })
-export class ComboComponent {
+export class ComboComponent implements OnInit {
   private chart!: Chart;
   private graph!: Graph;
 
@@ -71,8 +63,6 @@ export class ComboComponent {
     openall: false,
     layout: true,
   };
-  // private timebar?: TimeBar;
-  // // Define some options for the chart
 
   imageAlignment: IdMap<ImageAlignmentOptions> = {};
 
@@ -85,44 +75,15 @@ export class ComboComponent {
     // imageAlignment: this.imageAlignment,
     selectedNode: theme.selectedNode,
     selectedLink: theme.selectedLink,
-    logo: { u: '/assets/Logo.png' },
+    // logo: { u: '/assets/Logo.png' },
     iconFontFamily: 'Font Awesome 5 Free Solid',
     linkEnds: { avoidLabels: false },
     minZoom: 0.02,
     handMode: true,
   };
-  // // Define some options for the timebar
-  // public timebarOptions: TimeBarOptions = {
-  //   histogram: {
-  //     colour: '#E64669',
-  //     highlightColour: '#DD0031',
-  //     markColour: 'rgb(192, 192, 192)',
-  //     markHiColour: 'rgb(105, 105, 105)',
-  //   },
-  // };
-  // model = new Tooltip('', '', '', '', 'hidden', 'arrow');
-  // marks = [
-  //   {
-  //     dt1: new Date('01 Jan 2018 01:00:00'),
-  //     dt2: new Date('01 Jan 2050 01:00:00'),
-  //   },
-  // ];
-  // greyColours = ['rgb(105, 105, 105)', 'rgb(192, 192, 192)'];
-  // // only style the first 3 selections
-  // selectionColours = [
-  //   ['#9600d5', '#d0a3cb'],
-  //   ['rgb(0, 191, 255)', '#8dd8f8'],
-  //   ['rgb(50,205,50)', '#afdaae'],
-  // ];
-  ngOnInit() {
-    // WebFont.load({
-    //   custom: {
-    //     // be sure to include the CSS file in the page with the @font-face definition
-    //     families: ['Font Awesome 5 Free Solid'],
-    //   },
-    // });
 
-    let imageAlignmentDefinitions: any = {
+  ngOnInit() {
+    let imageAlignmentDefinitions: IdMap<ImageAlignmentOptions> = {
       'fa-user': { dy: -10, e: 0.9 },
       'fa-users': { dy: 0, e: 0.8 },
       'fa-globe-americas': { dy: 0, e: 1.4 },
@@ -137,7 +98,7 @@ export class ComboComponent {
     this.chartOptions.imageAlignment = this.imageAlignment;
   }
 
-  getCountryGlyph(item: Node) {
+  getCountryGlyph(item: Node): Glyph | null {
     if (!item.d.country || item.d.country === 'Unknown Country') {
       return null;
     }
@@ -153,7 +114,7 @@ export class ComboComponent {
     this.chart.each({ type: 'node' }, (item) => {
       const rTheme = getRegionTheme(getRegion(item.d.country));
       const countryGlyph = this.getCountryGlyph(item);
-      const g: any = countryGlyph !== null ? [countryGlyph] : [];
+      const g = countryGlyph !== null ? [countryGlyph] : [];
       props.push({
         id: item.id,
         u: undefined,
@@ -175,18 +136,7 @@ export class ComboComponent {
 
   klChartReady([chart]: [Chart]) {
     this.chart = chart;
-    //   this.timebar = timebar;
-    //   chartData.items.forEach((element) => {
-    //     if (element.type === 'node') {
-    //       element.fi = {
-    //         c: this.greyColours[0],
-    //         t: KeyLines.getFontIcon(
-    //           element.d.type === 'person' ? '.fa .fa-user' : '.fa .fa-building'
-    //         ),
-    //       };
-    //     }
-    //   });
-    this.chart.load(data as any);
+    this.chart.load(data);
 
     this.graph = KeyLines.getGraphEngine();
     this.graph.load(this.chart.serialize());
@@ -195,16 +145,28 @@ export class ComboComponent {
     this.applyTheme();
     this.layout();
 
-    // setUpEventHandlers();
-    // // set up the initial look
-    // onSelection();
+    this.onSelection();
+    // this.chart.on('all', (evt) => {
+    //   if (
+    //     ![
+    //       'pointer-move',
+    //       'drag-end',
+    //       'pointer-up',
+    //       'drag-move',
+    //       'view-change',
+    //       'drag-start',
+    //     ].includes(evt.name)
+    //   ) {
+    //     console.log(evt.name);
+    //   }
+    // });
   }
 
   layout(mode?: 'full' | 'adaptive') {
     return this.chart.layout('organic', { mode });
   }
 
-  foregroundSelection(ids: any) {
+  foregroundSelection(ids: string[]) {
     if (ids.length === 0) {
       // restore all the elements in the foreground
       this.chart.foreground(() => true, { type: 'all' });
@@ -213,9 +175,9 @@ export class ComboComponent {
     } else {
       // find the connections for all of the selected ids
       const neighbours = this.graph.neighbours(ids);
-      const foregroundMap: any = {};
+      const foregroundMap: { [id: string]: boolean } = {};
       const linksToReveal: string[] = [];
-      const propsToUpdate: any[] = [];
+      const propsToUpdate: LinkProperties[] = [];
       neighbours?.links?.forEach((linkId) => {
         // build map of neighbouring links to foreground
         foregroundMap[linkId] = true;
@@ -226,8 +188,9 @@ export class ComboComponent {
         // add neighbouring nodes to foreground map
         foregroundMap[nodeId] = true;
       });
-      const selectedItems: any = this.chart.getItem(ids);
-      selectedItems?.forEach((item: any) => {
+      const selectedItems = this.chart.getItem(ids);
+      selectedItems.forEach((item) => {
+        if (!item) return;
         // add selected items to foreground map
         foregroundMap[item.id] = true;
         if (item.type === 'link') {
@@ -255,6 +218,7 @@ export class ComboComponent {
   onSelection() {
     // grab current selection
     const selectedIds = this.chart.selection();
+
     // filter out any combo items to get only the underlying selection
     const ids = selectedIds.filter((id) => !this.chart.combo().isCombo(id));
     // remove the combos from the selection
@@ -350,54 +314,6 @@ export class ComboComponent {
         preventDefault();
       }
     }
-
-    // chart.on("drag-start", ({ type, id, setDragOptions }) => {
-    //   if (
-    //     type === "node" &&
-    //     chart.combo().isOpen(id) &&
-    //     !chart.options().handMode
-    //   ) {
-    //     setDragOptions({ type: "marquee" });
-    //   }
-    //   isDragging = true;
-    // });
-    // chart.on("drag-end", () => {
-    //   isDragging = false;
-    // });
-    // chart.on("double-click", ({ id, preventDefault, button }) => {
-    //   if (id && button === 0) {
-    //     if (isCombo(id)) {
-    //       if (chart.combo().isOpen(id)) {
-    //         closeCombo(id);
-    //       } else {
-    //         openCombo(id);
-    //       }
-    //     }
-    //     preventDefault();
-    //   }
-    // });
-    // // buttons
-    // document
-    //   .getElementById("combineCountry")
-    //   .addEventListener("click", combineCountries);
-    // document
-    //   .getElementById("combineRegion")
-    //   .addEventListener("click", combineRegions);
-    // document.getElementById("uncombine").addEventListener("click", uncombineAll);
-    // document.getElementById("layout").addEventListener("click", () => layout());
-    // document.getElementById("openall").addEventListener("click", () => {
-    //   openCombo(getAllComboIds());
-    // });
-
-    //   if (name === 'selection-change' && this.chart?.selection()) {
-    //     this.highlightSelections();
-    //   } else if (
-    //     name === 'hover' ||
-    //     name === 'pointer-down' ||
-    //     name === 'drag-move'
-    //   ) {
-    //     this.toggleTooltip(args as ChartPointerEventProps);
-    //   }
   }
 
   combineCountries() {
@@ -486,9 +402,9 @@ export class ComboComponent {
   }
 
   groupNodesBy(criteria: Function) {
-    const groups: any = {};
+    const groups: { [key: string]: string[] } = {};
     this.chart.each({ type: 'node', items: 'toplevel' }, (item) => {
-      const group = criteria(item);
+      const group: string = criteria(item);
       if (group) {
         if (!groups[group]) {
           groups[group] = [];

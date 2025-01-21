@@ -1,3 +1,5 @@
+import { ChartData } from 'keylines';
+
 // general theme settings
 export const theme = {
   selectedNode: {
@@ -107,7 +109,7 @@ export function getRegion(country: any) {
   return mapping[country];
 }
 
-export const data = {
+export const data: ChartData = {
   type: 'LinkChart',
   items: [
     {
@@ -4672,3 +4674,27 @@ export const data = {
     { id1: 'N196', id2: 'N152', id: 'N196/p/N152', c: '#696969', type: 'link' },
   ],
 };
+
+/**
+ * entity -> shipment -> fa-ship
+ * catalogType -> S -> P -> D
+ * entityType -> unknown
+ * shipment -> fa-truck
+ * organization -> fa-sitemap
+ * assets -> fa-boxes
+ */
+export const shipmentData: ChartData = {
+  type: 'LinkChart',
+  items: [],
+};
+
+function getUserData() {
+  const user = 'N365';
+  const nodes = data.items.filter((item) => item.id == user);
+  const links = data.items.filter((item) => item.type === 'link');
+  // .filter((item) => item.id1 == user);
+  const validLinks = links.filter((link) => link.id.includes(user));
+  console.log(nodes, validLinks);
+}
+
+getUserData();
