@@ -48,17 +48,17 @@
             <p>
               Click on a person inside the combo to reveal their connections.
             </p>
-            <!-- <div>
+            <div>
               <input
                 class="btn btn-block"
                 type="button"
-                value="Combine by Country"
+                value="Combine by Organization"
                 style="text-align: center"
                 id="combineCountry"
-                [disabled]="!buttonsEnabledStates.combineCountry"
-                (click)="combineCountries()"
+                [disabled]="!buttonsEnabledStates.combineOrganizations"
+                (click)="combineOrganizations()"
               />
-              <input
+              <!-- <input
                 class="btn btn-block"
                 type="button"
                 value="Combine by Country and Region"
@@ -84,7 +84,7 @@
                 [disabled]="!buttonsEnabledStates.openall"
                 id="openall"
                 (click)="openCombo(getAllComboIds())"
-              />
+              />-->
               <input
                 class="btn btn-block"
                 type="button"
@@ -94,7 +94,7 @@
                 id="layout"
                 (click)="layout()"
               />
-            </div> -->
+            </div>
           </div>
         </form>
       </div>

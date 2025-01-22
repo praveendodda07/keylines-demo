@@ -143,9 +143,11 @@ export class ComboComponent implements OnInit {
 
     // FIXME:
     this.applyTheme();
-    this.layout();
 
     this.onSelection();
+    setTimeout(() => {
+      this.layout();
+    }, 1500);
     // this.chart.on('all', (evt) => {
     //   if (
     //     ![

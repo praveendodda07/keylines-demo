@@ -11,7 +11,7 @@ import { ChartData, Node, Link } from 'keylines';
 
 export type EntityType = 'Asset' | 'Shipment' | 'Organization';
 
-export const entityIcons = {
+const entityIcons = {
   Asset: 'fa-boxes',
   Shipment: 'fa-truck',
   Organization: 'fa-sitemap',
@@ -60,6 +60,26 @@ export function getEntityIcon(entity: EntityType) {
   if (!entity || !entityIcons[entity]) return entityIcons.default;
 
   return entityIcons[entity];
+}
+
+const organizations = [
+  {
+    id: 'O1',
+    name: 'Org 1',
+  },
+  {
+    id: 'O2',
+    name: 'Org 2',
+  },
+];
+
+export function getOrgnizationRegion(organizationId: string) {
+  if (!organizationId) return null;
+
+  const organization = organizations.find((org) => org.id == organizationId);
+  if (!organization) return null;
+
+  return organization.name;
 }
 
 const nodes: Node[] = [
@@ -111,31 +131,31 @@ const nodes: Node[] = [
     x: 0,
     y: 0,
   },
-  {
-    type: 'node',
-    id: 'O1',
-    t: 'Org 1',
-    d: {
-      assets: ['A1', 'A2'],
-      shipments: ['S1'],
-      entity: 'Organization',
-    },
-    x: 0,
-    y: 0,
-  },
+  //   {
+  //     type: 'node',
+  //     id: 'O1',
+  //     t: 'Org 1',
+  //     d: {
+  //       assets: ['A1', 'A2'],
+  //       shipments: ['S1'],
+  //       entity: 'Organization',
+  //     },
+  //     x: 0,
+  //     y: 0,
+  //   },
 
-  {
-    type: 'node',
-    id: 'O2',
-    t: 'Org 2',
-    d: {
-      assets: [],
-      shipments: ['S2'],
-      entity: 'Organization',
-    },
-    x: 0,
-    y: 0,
-  },
+  //   {
+  //     type: 'node',
+  //     id: 'O2',
+  //     t: 'Org 2',
+  //     d: {
+  //       assets: [],
+  //       shipments: ['S2'],
+  //       entity: 'Organization',
+  //     },
+  //     x: 0,
+  //     y: 0,
+  //   },
 ];
 const links: Link[] = [
   {
@@ -166,20 +186,20 @@ const links: Link[] = [
     c: '#696969',
     type: 'link',
   },
-  {
-    id1: 'S2',
-    id2: 'O2',
-    id: 'S2/p/O2',
-    c: '#696969',
-    type: 'link',
-  },
-  {
-    id1: 'S1',
-    id2: 'O1',
-    id: 'S1/p/O1',
-    c: '#696969',
-    type: 'link',
-  },
+  //   {
+  //     id1: 'S2',
+  //     id2: 'O2',
+  //     id: 'S2/p/O2',
+  //     c: '#696969',
+  //     type: 'link',
+  //   },
+  //   {
+  //     id1: 'S1',
+  //     id2: 'O1',
+  //     id: 'S1/p/O1',
+  //     c: '#696969',
+  //     type: 'link',
+  //   },
 ];
 export const shipmentData: ChartData = {
   type: 'LinkChart',
