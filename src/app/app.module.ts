@@ -11,11 +11,23 @@ import {
 } from '../angular-keylines';
 import { ComboComponent } from './combo/combo.component';
 import { ShipmentsGraphComponent } from './shipments-graph/shipments-graph.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Comp1Component } from './comp1/comp1.component';
+import { Comp2Component } from './comp2/comp2.component';
+import { ChartService } from './services/chart.service';
 
 @NgModule({
-  declarations: [AppComponent, KlComponents, KlComponent, ComboComponent, ShipmentsGraphComponent],
-  imports: [BrowserModule, AppRoutingModule],
-  providers: [KlComponentsService],
+  declarations: [
+    AppComponent,
+    KlComponents,
+    KlComponent,
+    ComboComponent,
+    ShipmentsGraphComponent,
+    Comp1Component,
+    Comp2Component,
+  ],
+  imports: [BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule],
+  providers: [KlComponentsService, ChartService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

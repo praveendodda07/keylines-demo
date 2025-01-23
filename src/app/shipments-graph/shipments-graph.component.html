@@ -23,7 +23,7 @@
     </div>
   </div>
   <div style="width: 200px" class="rhs citext closed" id="demorhscontent">
-    <div class="title-bar">
+    <!-- <div class="title-bar">
       <svg
         viewBox="0 0 360 60"
         style="
@@ -36,28 +36,73 @@
       >
         <text x="0" y="38" style="width: 100%">Combining Nodes</text>
       </svg>
-    </div>
+    </div> -->
     <div class="tab-content-panel" data-tab-group="rhs">
       <div class="toggle-content is-visible tabcontent" id="controlsTab">
         <form autocomplete="off" onsubmit="return false" id="rhsForm">
           <div class="cicontent">
-            <p>
+            <!-- <p>
               Organise the data into combos using the controls below and
               double-click the combos to see what’s inside.
             </p>
             <p>
               Click on a person inside the combo to reveal their connections.
-            </p>
+            </p> -->
             <div>
-              <input
+              <div class="p-2">
+                <div>
+                  <h4 class="font-bold">Groupings</h4>
+                  <div class="pl-3">
+                    <div class="flex gap-2">
+                      <input
+                        [(ngModel)]="groupedBy"
+                        name="grouping"
+                        type="radio"
+                        id="organization"
+                        [value]="entities.ORGANIZATION"
+                        (ngModelChange)="groupChange()"
+                      />
+                      <label for="organization">Organization</label>
+                    </div>
+                    <div class="flex gap-2">
+                      <input
+                        [(ngModel)]="groupedBy"
+                        name="grouping"
+                        type="radio"
+                        id="status"
+                        [value]="entities.STATUS"
+                        (ngModelChange)="groupChange()"
+                      />
+                      <label for="status">Shipment Status</label>
+                    </div>
+                    <div class="flex gap-2">
+                      <input
+                        [(ngModel)]="groupedBy"
+                        value="status"
+                        name="grouping"
+                        type="radio"
+                        id="type"
+                        [value]="entities.STATUS"
+                        (ngModelChange)="groupChange()"
+                      />
+                      <label for="type">Shipment Type</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="py-3">
+                  <h4 class="font-bold">Filters</h4>
+                </div>
+              </div>
+
+              <!-- <input
                 class="btn btn-block"
                 type="button"
-                value="Combine by Organization"
+                value="Toggle Nodes"
                 style="text-align: center"
                 id="combineCountry"
                 [disabled]="!buttonsEnabledStates.combineOrganizations"
-                (click)="combineOrganizations()"
-              />
+                (click)="toggleNodes()"
+              /> -->
               <!-- <input
                 class="btn btn-block"
                 type="button"
@@ -85,7 +130,7 @@
                 id="openall"
                 (click)="openCombo(getAllComboIds())"
               />-->
-              <input
+              <!-- <input
                 class="btn btn-block"
                 type="button"
                 value="Layout"
@@ -93,7 +138,7 @@
                 style="text-align: center; margin-top: 12px"
                 id="layout"
                 (click)="layout()"
-              />
+              /> -->
             </div>
           </div>
         </form>

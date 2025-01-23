@@ -4674,14 +4674,3 @@ export const data: ChartData = {
     { id1: 'N196', id2: 'N152', id: 'N196/p/N152', c: '#696969', type: 'link' },
   ],
 };
-
-function getUserData() {
-  const user = 'N365';
-  const nodes = data.items.filter((item) => item.id == user);
-  const links = data.items.filter((item) => item.type === 'link');
-  // .filter((item) => item.id1 == user);
-  const validLinks = links.filter((link) => link.id.includes(user));
-  console.log(nodes, validLinks);
-}
-
-getUserData();
