@@ -13,14 +13,13 @@ import {
   ComboDefinition,
 } from 'keylines';
 import { theme } from '../combo/combo2-data';
-import { Events } from '../combo/combo.component';
 import {
   getEntityIcon,
   getEntityTheme,
   getOrgnizationRegion,
   shipmentData,
 } from './shipment-data';
-import { Entites } from '../@types/chart.types';
+import { ChartEvents, Entites } from '../@types/chart.types';
 import { ChartService } from '../services/chart.service';
 
 @Component({
@@ -59,9 +58,12 @@ export class ShipmentsGraphComponent {
     this.graph = KeyLines.getGraphEngine();
     this.graph.load(this.chartService.chart.serialize());
 
+    this.reset();
+
     this.applyTheme();
     setTimeout(() => {
-      this.layout();
+      this.chartService.layout();
+      // this.combineOrganizations();
     }, 10);
 
     // this.closeAll();
@@ -91,9 +93,7 @@ export class ShipmentsGraphComponent {
     });
     return orgNodes;
   }
-  layout(mode?: 'full' | 'adaptive') {
-    return this.chartService.chart.layout('organic', { mode });
-  }
+
   applyTheme() {
     const props: NodeProperties[] = [];
     this.chartService.chart.each({ type: 'node' }, (item) => {
@@ -129,14 +129,44 @@ export class ShipmentsGraphComponent {
       true /* regex */
     );
   }
-  klChartEvents({ name, args }: Events) {
+  reset() {
+    this.chartService.chart.each({ type: 'node' }, (item) => {
+      item.d.isShown = true;
+    });
+  }
+
+  klChartEvents({ name, args }: ChartEvents) {
     if (name == 'selection-change') {
       this.onSelection();
     }
 
     if (name == 'double-click') {
-      this.openNode();
+      // this.openNode();
+      this.setSelection();
     }
+
+    if (name == 'click') {
+    }
+  }
+
+  async setSelection() {
+    const selectedId = this.chartService.chart.selection();
+    if (!selectedId.length) return;
+    this.chartService.chart.lock(true);
+    console.log(this.chartService.chart.selection());
+
+    this.graph.neighbours();
+    const results = await this.chartService.chart.filter(
+      (item) => {
+        return false;
+      },
+      { type: 'node', time: 300 }
+    );
+
+    this.chartService.layout('adaptive');
+    this.chartService.chart.lock(false);
+
+    // console.log(results);
   }
 
   openNode() {
@@ -153,7 +183,7 @@ export class ShipmentsGraphComponent {
     // [neighbours[0]].forEach((item) => {
     //   console.log(this.graph.distances(item));
     // });
-    this.layout('adaptive');
+    this.chartService.layout('adaptive');
   }
 
   isOpen = true;
@@ -175,7 +205,7 @@ export class ShipmentsGraphComponent {
       });
     }
     this.isOpen = !this.isOpen;
-    this.layout();
+    this.chartService.layout();
   }
 
   groupChange() {
@@ -190,9 +220,10 @@ export class ShipmentsGraphComponent {
     //   false
     // );
     // this.combinedByCountry = true;
-    this.combine(this.byOrganization, 'lens', Entites.ORGANIZATION).then(() =>
-      this.afterCombine()
-    );
+    // this.combine(this.byOrganization, 'lens', Entites.ORGANIZATION).then(() =>
+    //   this.afterCombine()
+    // );
+    this.combineEntity().then(() => this.afterCombine());
   }
 
   groupNodesBy(criteria: Function) {
@@ -243,6 +274,75 @@ export class ShipmentsGraphComponent {
     return size;
   }
 
+  combineEntity() {
+    let criteria = this.byOrganization;
+    let arrange: ComboArrangement = 'lens';
+    let entity = Entites.ORGANIZATION;
+
+    const options: CombineOptions = {
+      arrange,
+      animate: true,
+      time: 1000,
+      select: false,
+    };
+    const groups = this.groupNodesBy(criteria);
+
+    console.log(this.graph.distances('O1'));
+
+    const toClose: string[] = [];
+    const combineArray: ComboDefinition[] = [];
+
+    Object.keys(groups).forEach((group) => {
+      toClose.push(...groups[group]);
+      // ignore the 'unknown region'
+
+      if (group !== 'Unknown Region') {
+        const firstItem = this.chartService.chart.getItem(groups[group][0]);
+        const isRegion = firstItem?.d.region !== undefined;
+        const region = isRegion
+          ? firstItem.d.region
+          : getOrgnizationRegion(firstItem?.d.organization);
+
+        // firstItem?.d.organization;
+        const rTheme = getEntityTheme(entity);
+        const combineIds: ComboDefinition = {
+          ids: groups[group],
+          d: { region, isRegion },
+          label: region,
+          glyph: null,
+          style: {
+            e: Math.sqrt(this.getNodeSize(groups[group])),
+            c: isRegion ? 'white' : rTheme.iconColour,
+            fc: 'rgb(100,100,100)',
+            fs: isRegion ? theme.regionFontSize : theme.countryFontSize,
+            fi: {
+              t: KeyLines.getFontIcon(getEntityIcon(entity)),
+              c: isRegion ? rTheme.iconColour : 'white',
+            },
+            bw: 2,
+            b: isRegion ? undefined : theme.borderColour,
+            sh:
+              this.chartService.chart.options().combos?.shape === 'rectangle'
+                ? 'box'
+                : undefined,
+          },
+          openStyle: {
+            c: isRegion ? rTheme.regionOCColour : rTheme.countryBgColour,
+            b: theme.borderColour,
+            bw: 5,
+          },
+        };
+        combineArray.push(combineIds);
+      }
+    });
+
+    // close all groups before we combine
+    this.chartService.chart.combo().close(toClose, { animate: false });
+    return this.chartService.chart
+      .combo()
+      .combine(combineArray, options)
+      .then((comboIds: string[]) => this.applyLinkTheme(comboIds));
+  }
   combine(criteria: Function, arrange: ComboArrangement, entity: Entites) {
     const options: CombineOptions = {
       arrange,
@@ -334,7 +434,7 @@ export class ShipmentsGraphComponent {
     return item.d.organization || null;
   }
   afterCombine() {
-    this.layout('adaptive').then(() => {
+    this.chartService.layout('adaptive').then(() => {
       // this.enableInput(
       //   ['openall', 'combineRegion', 'uncombine', 'layout'],
       //   true

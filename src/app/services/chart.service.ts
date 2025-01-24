@@ -8,7 +8,7 @@ import {
 
 export class ChartService {
   private _chart!: Chart;
-  public graph!: Graph;
+  private _graph!: Graph;
 
   private chartOptions: ChartOptions = {
     drag: {
@@ -21,9 +21,15 @@ export class ChartService {
     //   selectedLink: theme.selectedLink,
     // logo: { u: '/assets/Logo.png' },
     iconFontFamily: 'Font Awesome 5 Free Solid',
+    arrows: 'small',
     linkEnds: { avoidLabels: false },
     minZoom: 0.02,
     handMode: true,
+
+    watermark: {
+      t: 'ParkourSC',
+      a: 'top',
+    },
   };
 
   private imageAlignmentDefinitions: IdMap<ImageAlignmentOptions> = {
@@ -34,7 +40,16 @@ export class ChartService {
     'fa-sitemap': { dy: 0, e: 0.8 },
     'fa-users': { dy: 0, e: 0.8 },
     'fa-globe-americas': { dy: 0, e: 1.4 },
+    'fa-warehouse': { dy: 0, e: 0.8 },
   };
+
+  get chart() {
+    return this._chart;
+  }
+
+  get graph() {
+    return this._graph;
+  }
 
   constructor() {
     this.configureImageAlignments();
@@ -66,7 +81,11 @@ export class ChartService {
     this._chart = chart;
   }
 
-  get chart() {
-    return this._chart;
+  public initizeGraph(graph: Graph) {
+    this._graph = graph;
+  }
+
+  public layout(mode?: 'full' | 'adaptive') {
+    return this.chart.layout('organic', { mode });
   }
 }

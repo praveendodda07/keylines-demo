@@ -26,10 +26,8 @@ import {
   countryComboArrangement,
   countryAliases,
 } from './combo2-data.js';
-export interface Events {
-  name: keyof ChartEventHandlers;
-  args: ChartAllEventProps;
-}
+import { ChartEvents } from '../@types/chart.types.js';
+
 export class Tooltip {
   constructor(
     public start: string,
@@ -280,7 +278,7 @@ export class ComboComponent implements OnInit {
     return comboIds;
   }
 
-  klChartEvents({ name, args }: Events) {
+  klChartEvents({ name, args }: ChartEvents) {
     if (name == 'selection-change') {
       this.onSelection();
     }
