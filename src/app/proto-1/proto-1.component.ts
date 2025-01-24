@@ -1,9 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { ChartService } from '../services/chart.service';
-import { Chart, ChartOptions, LinkProperties, NodeProperties } from 'keylines';
+import {
+  Chart,
+  ChartOptions,
+  Link,
+  LinkProperties,
+  Node,
+  NodeProperties,
+} from 'keylines';
 import { theme } from '../combo/combo2-data';
 import { getEntityIcon, getEntityTheme, shipmentData } from './data';
 import { ChartEvents } from '../@types/chart.types';
+import { ProtoApiService } from '../services/proto-api.service';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-proto-1',
@@ -13,10 +22,11 @@ import { ChartEvents } from '../@types/chart.types';
 export class Proto1Component implements OnInit {
   private chartService!: ChartService;
   public chartOptions!: ChartOptions;
-  constructor() {
+  constructor(private apiService: ProtoApiService) {
     this.chartService = new ChartService();
   }
 
+  private data: (Node | Link)[] = [];
   ngOnInit(): void {
     this.chartOptions = this.chartService.setChartOptions({
       selectedNode: theme.selectedNode,
@@ -24,47 +34,55 @@ export class Proto1Component implements OnInit {
     });
   }
 
+  fetchNodes(nodeId?: string) {
+    this.apiService
+      .fetchNodes(nodeId)
+      .pipe(
+        map((res) => {
+          return res.filter(
+            (item) => !this.data.find((dataItem) => item.id == dataItem.id)
+          );
+        })
+      )
+      .subscribe(async (res) => {
+        if (!res.length) return;
+        this.data.push(...res);
+
+        // const data: (Node | Link)[]]
+        res.forEach((item) => {
+          this.chartService.chart.setItem(item);
+        });
+
+        this.applyTheme();
+        this.chartService.layout('adaptive');
+      });
+  }
   klChartReady([chart]: [Chart]) {
     this.chartService.initializeChart(chart);
-    this.chartService.chart.load(shipmentData);
+    this.chartService.chart.load({
+      type: 'LinkChart',
+      items: [],
+    });
 
     this.chartService.initizeGraph(KeyLines.getGraphEngine());
     this.chartService.graph.load(this.chartService.chart.serialize());
 
-    this.applyTheme();
-    setTimeout(() => {
-      this.chartService.layout();
-    }, 10);
+    this.fetchNodes();
   }
   klChartEvents({ name, args }: ChartEvents) {
-    if (name == 'selection-change') {
-      this.onSelection();
-    }
+    // if (name == 'selection-change') {
+    //   this.onSelection();
+    // }
 
     if (name == 'double-click') {
-      // this.openNode();
-      this.setSelection();
+      this.openNode();
     }
   }
 
-  async setSelection() {
-    const selectedId = this.chartService.chart.selection();
-    if (!selectedId.length) return;
-    this.chartService.chart.lock(true);
-    console.log(this.chartService.chart.selection());
-
-    this.chartService.graph.neighbours();
-    const results = await this.chartService.chart.filter(
-      (item) => {
-        return false;
-      },
-      { type: 'node', time: 300 }
-    );
-
-    this.chartService.layout('adaptive');
-    this.chartService.chart.lock(false);
-
-    // console.log(results);
+  openNode() {
+    const [id] = this.chartService.chart.selection();
+    if (!id) return;
+    this.fetchNodes(id);
   }
 
   onSelection() {
@@ -141,6 +159,10 @@ export class Proto1Component implements OnInit {
       // const countryGlyph = this.getCountryGlyph(item);
       // const g = countryGlyph !== null ? [countryGlyph] : [];
 
+      let color = rTheme.iconColour;
+      if (item.d?.entity == 'Plant' && item.d?.isExternal) {
+        color = 'red';
+      }
       const g = {
         p: 'ne',
         e: 0.8,
@@ -151,7 +173,7 @@ export class Proto1Component implements OnInit {
         id: item.id,
         u: undefined,
         g: [],
-        c: rTheme.iconColour,
+        c: color,
         fi: {
           t: KeyLines.getFontIcon(getEntityIcon(item.d.entity)),
           c: 'white',
@@ -165,7 +187,7 @@ export class Proto1Component implements OnInit {
     // link styles
     // FIXME:
     this.chartService.chart.setProperties(
-      { id: 'p', c: theme.linkColour, w: 3 },
+      { id: '-089-', c: theme.linkColour, w: 3 },
       true /* regex */
     );
   }

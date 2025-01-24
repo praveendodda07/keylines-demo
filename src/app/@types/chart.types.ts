@@ -7,6 +7,7 @@ export enum Entites {
   ROUTE = 'Route',
   STATUS = 'Status',
   DC = 'DC',
+  Plant = 'Plant',
 }
 
 export interface EntityTheme {

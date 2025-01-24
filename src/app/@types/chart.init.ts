@@ -7,6 +7,7 @@ export const entityIcons: EntityIcons = {
   Route: 'fa-route',
   Status: 'fa-question',
   DC: 'fa-warehouse',
+  Plant: 'fa-industry',
   default: 'fa-question',
 };
 export const entityThemes: EntityThemes = {
@@ -39,6 +40,11 @@ export const entityThemes: EntityThemes = {
     iconColour: 'rgb(206,181,85)',
     countryBgColour: 'rgba(235,234,224,0.8)',
     regionOCColour: 'rgba(246,247,237,0.8)',
+  },
+  Plant: {
+    iconColour: 'rgb(0,172,52)',
+    countryBgColour: 'rgba(223,236,225,0.8)',
+    regionOCColour: 'rgba(236,248,237,0.8)',
   },
   default: {
     iconColour: 'rgb(146,148,184)',
