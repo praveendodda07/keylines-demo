@@ -1,5 +1,7 @@
 /*  Ensure Flexbox and cssgrid can shrink in size */
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /*
    * Fonts are loaded like any other resource in the web page. 
    *
