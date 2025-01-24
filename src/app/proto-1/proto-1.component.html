@@ -1,0 +1,25 @@
+<div class="chart-wrapper demo-cols" style="display: flex">
+  <div
+    class="tab-content-panel flex1"
+    id="lhs"
+    data-tab-group="rhs"
+    style="flex-grow: 1"
+  >
+    <div
+      class="toggle-content is-visible"
+      id="lhsVisual"
+      style="height: calc(100vh - 40px)"
+    >
+      <kl-components (klReady)="klChartReady($event)">
+        <kl-component
+          class="flex1"
+          klType="chart"
+          klContainerClass="klchart klchart-timebar"
+          [klOptions]="chartOptions"
+          (klEvents)="klChartEvents($event)"
+        >
+        </kl-component>
+      </kl-components>
+    </div>
+  </div>
+</div>

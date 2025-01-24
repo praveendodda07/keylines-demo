@@ -15,6 +15,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Comp1Component } from './comp1/comp1.component';
 import { Comp2Component } from './comp2/comp2.component';
 import { ChartService } from './services/chart.service';
+import { Proto1Component } from './proto-1/proto-1.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { ChartService } from './services/chart.service';
     ShipmentsGraphComponent,
     Comp1Component,
     Comp2Component,
+    Proto1Component,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule],
   providers: [KlComponentsService, ChartService],
