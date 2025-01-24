@@ -1,9 +1,12 @@
+import { ChartAllEventProps, ChartEventHandlers } from 'keylines';
+
 export enum Entites {
   ASSET = 'Asset',
   SHIPMENT = 'Shipment',
   ORGANIZATION = 'Organization',
   ROUTE = 'Route',
   STATUS = 'Status',
+  DC = 'DC',
 }
 
 export interface EntityTheme {
@@ -19,3 +22,8 @@ export type EntityThemes = Record<Entites, EntityTheme> & {
 export type EntityIcons = Record<Entites, string> & {
   default: string;
 };
+
+export interface ChartEvents {
+  name: keyof ChartEventHandlers;
+  args: ChartAllEventProps;
+}
