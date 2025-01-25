@@ -9,7 +9,7 @@ import {
   NodeProperties,
 } from 'keylines';
 import { theme } from '../combo/combo2-data';
-import { getEntityIcon, getEntityTheme, shipmentData } from './data';
+import { getEntityIcon, getEntityTheme } from './data';
 import { ChartEvents } from '../@types/chart.types';
 import { ProtoApiService } from '../services/proto-api.service';
 import { map } from 'rxjs';
@@ -48,7 +48,6 @@ export class Proto1Component implements OnInit {
         if (!res.length) return;
         this.data.push(...res);
 
-        // const data: (Node | Link)[]]
         res.forEach((item) => {
           this.chartService.chart.setItem(item);
         });
@@ -155,6 +154,8 @@ export class Proto1Component implements OnInit {
   applyTheme() {
     const nodeProps: NodeProperties[] = [];
     const linkProps: LinkProperties[] = [];
+
+    // node styles
     this.chartService.chart.each({ type: 'node' }, (item) => {
       const rTheme = getEntityTheme(item.d.entity);
       // const countryGlyph = this.getCountryGlyph(item);
@@ -183,24 +184,14 @@ export class Proto1Component implements OnInit {
         bw: 2,
       });
     });
-    // node styles
     this.chartService.chart.setProperties(nodeProps);
+
     // link styles
-
     this.chartService.chart.each({ type: 'link' }, (item) => {
-      // const countryGlyph = this.getCountryGlyph(item);
-      // const g = countryGlyph !== null ? [countryGlyph] : [];
-
       const data = this.chartService.chart.getItem(item.id2) as Node;
-      const rTheme = getEntityTheme(data.d.entity);
-
-      let color = rTheme.iconColour;
-      if (data.d?.entity == 'Plant' && data.d?.isExternal) {
-        color = 'red';
-      }
 
       linkProps.push({
-        c: color,
+        c: data.c || theme.linkColour,
         w: 3,
         id: item.id,
       });

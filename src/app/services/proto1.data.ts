@@ -175,7 +175,6 @@ export class DataService {
   constructor() {}
 
   getNodeData(nodeId?: string): Observable<Response<Data>[]> {
-    let data: Data[] = [];
     if (!nodeId) {
       return of(this.mapToNodes([this.data[0]]));
     }
