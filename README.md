@@ -14,7 +14,7 @@
   npm install -g @angular/cli@17.3.10
   ```
 
-1. Clone the repo via ssh:
+1. Clone the repo via http:
    ```bash 
     git clone https://github.com/praveendodda07/keylines-demo.git
     ```
