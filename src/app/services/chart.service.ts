@@ -15,7 +15,7 @@ export class ChartService {
       links: false,
       panAtBoundary: false,
     },
-    truncateLabels: { maxLength: 15 },
+    // truncateLabels: { maxLength: 15 },
     // imageAlignment: this.imageAlignment,
     //   selectedNode: theme.selectedNode,
     //   selectedLink: theme.selectedLink,

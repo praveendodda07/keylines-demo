@@ -153,7 +153,8 @@ export class Proto1Component implements OnInit {
     }
   }
   applyTheme() {
-    const props: NodeProperties[] = [];
+    const nodeProps: NodeProperties[] = [];
+    const linkProps: LinkProperties[] = [];
     this.chartService.chart.each({ type: 'node' }, (item) => {
       const rTheme = getEntityTheme(item.d.entity);
       // const countryGlyph = this.getCountryGlyph(item);
@@ -169,7 +170,7 @@ export class Proto1Component implements OnInit {
         c: 'rgb(87, 167, 115)',
         t: ' ',
       };
-      props.push({
+      nodeProps.push({
         id: item.id,
         u: undefined,
         g: [],
@@ -183,12 +184,28 @@ export class Proto1Component implements OnInit {
       });
     });
     // node styles
-    this.chartService.chart.setProperties(props);
+    this.chartService.chart.setProperties(nodeProps);
     // link styles
-    // FIXME:
-    this.chartService.chart.setProperties(
-      { id: '-089-', c: theme.linkColour, w: 3 },
-      true /* regex */
-    );
+
+    this.chartService.chart.each({ type: 'link' }, (item) => {
+      // const countryGlyph = this.getCountryGlyph(item);
+      // const g = countryGlyph !== null ? [countryGlyph] : [];
+
+      const data = this.chartService.chart.getItem(item.id2) as Node;
+      const rTheme = getEntityTheme(data.d.entity);
+
+      let color = rTheme.iconColour;
+      if (data.d?.entity == 'Plant' && data.d?.isExternal) {
+        color = 'red';
+      }
+
+      linkProps.push({
+        c: color,
+        w: 3,
+        id: item.id,
+      });
+    });
+
+    this.chartService.chart.setProperties(linkProps);
   }
 }
