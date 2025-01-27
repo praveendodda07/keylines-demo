@@ -32,42 +32,50 @@ export class DataService {
       id: 'MDC',
       name: 'Main DC',
       entity: 'DC',
+      location: 'Hyderabad, India',
     },
     {
       id: 'DC1',
       name: 'Ukrain DC',
       entity: 'DC',
+      location: 'Kyiv, Ukrain',
     },
     {
       id: 'DC2',
       name: 'China DC',
       entity: 'DC',
+      location: 'Beijing, China',
     },
     {
       id: 'DC3',
       name: 'NA RDC',
       entity: 'DC',
+      location: 'Amsterdam, NA',
     },
     {
       id: 'DC4',
       name: 'Brazil RDC',
       entity: 'DC',
+      location: 'Brasília, Brazil',
     },
     {
       id: 'DC5',
       name: 'Germany DC',
       entity: 'DC',
+      location: 'Berlin, Germany',
     },
 
     {
       id: 'DC6',
       name: 'DC x',
       entity: 'DC',
+      location: 'Albany, New York',
     },
     {
       id: 'DC7',
       name: 'Thermofisher CTD',
       entity: 'DC',
+      location: 'Paris, France',
     },
     {
       id: 'P1',

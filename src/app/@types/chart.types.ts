@@ -28,3 +28,8 @@ export interface ChartEvents {
   name: keyof ChartEventHandlers;
   args: ChartAllEventProps;
 }
+
+export interface NodeTooltip {
+  id: string | null;
+  element?: HTMLElement | null;
+}

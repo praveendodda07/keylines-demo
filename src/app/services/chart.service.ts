@@ -30,6 +30,9 @@ export class ChartService {
       t: 'ParkourSC',
       a: 'top',
     },
+    zoom: {
+      adaptiveStyling: true,
+    },
   };
 
   private imageAlignmentDefinitions: IdMap<ImageAlignmentOptions> = {

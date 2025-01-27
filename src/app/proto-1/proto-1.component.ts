@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { ChartService } from '../services/chart.service';
 import {
   Chart,
   ChartOptions,
+  ChartPointerEventProps,
   Link,
   LinkProperties,
   Node,
@@ -10,7 +11,7 @@ import {
 } from 'keylines';
 import { theme } from '../combo/combo2-data';
 import { getEntityIcon, getEntityTheme } from './data';
-import { ChartEvents } from '../@types/chart.types';
+import { ChartEvents, Entites, NodeTooltip } from '../@types/chart.types';
 import { ProtoApiService } from '../services/proto-api.service';
 import { map } from 'rxjs';
 
@@ -19,9 +20,22 @@ import { map } from 'rxjs';
   templateUrl: './proto-1.component.html',
   styleUrl: './proto-1.component.scss',
 })
-export class Proto1Component implements OnInit {
+export class Proto1Component implements OnInit, AfterViewInit {
   private chartService!: ChartService;
   public chartOptions!: ChartOptions;
+
+  private tooltipContainer!: Element;
+  private templateHtml!: string;
+  private viewWidth!: number;
+  private viewHeight!: number;
+
+  public tooltip: NodeTooltip = {
+    id: null,
+    element: null,
+  };
+
+  private readonly nodeBaseSize = 26;
+
   constructor(private apiService: ProtoApiService) {
     this.chartService = new ChartService();
   }
@@ -32,6 +46,14 @@ export class Proto1Component implements OnInit {
       selectedNode: theme.selectedNode,
       selectedLink: theme.selectedLink,
     });
+  }
+  ngAfterViewInit(): void {
+    this.templateHtml = (
+      document.getElementById('tt_html') as Element
+    ).innerHTML;
+    this.tooltipContainer = document.querySelector(
+      '#tooltip-container'
+    ) as Element;
   }
 
   fetchNodes(nodeId?: string) {
@@ -60,11 +82,15 @@ export class Proto1Component implements OnInit {
     this.chartService.initializeChart(chart);
     this.chartService.chart.load({
       type: 'LinkChart',
-      items: [],
+      items: this.data,
     });
 
     this.chartService.initizeGraph(KeyLines.getGraphEngine());
     this.chartService.graph.load(this.chartService.chart.serialize());
+
+    let { width, height } = this.chartService.chart.viewOptions();
+    this.viewWidth = width;
+    this.viewHeight = height;
 
     this.fetchNodes();
   }
@@ -75,6 +101,25 @@ export class Proto1Component implements OnInit {
 
     if (name == 'double-click') {
       this.openNode();
+    }
+
+    if (name == 'view-change') {
+      const { width: newWidth, height: newHeight } =
+        this.chartService.chart.viewOptions();
+      if (this.viewWidth !== newWidth || this.viewHeight !== newHeight) {
+        this.closeTooltip();
+        this.viewWidth = newWidth;
+        this.viewHeight = newHeight;
+      }
+      this.updateTooltipPosition();
+    }
+
+    if (name == 'hover') {
+      this.handleTooltip(args as ChartPointerEventProps);
+    }
+
+    if (name == 'drag-move') {
+      this.updateTooltipPosition();
     }
   }
 
@@ -198,5 +243,73 @@ export class Proto1Component implements OnInit {
     });
 
     this.chartService.chart.setProperties(linkProps);
+  }
+
+  private handleTooltip({ id }: ChartPointerEventProps) {
+    if (!id) return this.closeTooltip();
+    const item = this.chartService.chart.getItem(id);
+    if (item && item.type === 'node') {
+      const tooltipContext = this.getTooltipContext(item?.d, item.d.entity);
+
+      if (!tooltipContext) return this.closeTooltip();
+
+      const html = this.templateHtml;
+
+      // Add it to the DOM
+      this.tooltipContainer.innerHTML = html;
+      this.tooltip.element = document.getElementById('tooltip') as HTMLElement;
+
+      this.tooltip.element.innerHTML = tooltipContext;
+      this.tooltip.id = id;
+      this.updateTooltipPosition();
+    } else if (this.tooltip.element) {
+      this.closeTooltip();
+    }
+  }
+  private getTooltipContext(data: Record<string, any>, entity: Entites) {
+    let tooltipHtml = ``;
+    if (entity == Entites.DC) {
+      tooltipHtml = `<b>Location:</b> ${data?.['location'] || ''}`;
+    }
+
+    return tooltipHtml;
+  }
+  private closeTooltip() {
+    if (this.tooltip.element) {
+      this.tooltip.element.style.opacity = '' + 0;
+    }
+    this.tooltip.id = null;
+    this.tooltip.element = null;
+  }
+
+  private updateTooltipPosition() {
+    if (this.tooltip.id && this.tooltip.element) {
+      const { id, element } = this.tooltip;
+      const item = this.chartService.chart.getItem(id) as Node;
+      const coordinates = this.chartService.chart.viewCoordinates(
+        item.x || 0,
+        item.y || 0
+      );
+      const x = coordinates.x;
+      const y = coordinates.y;
+
+      const zoom = this.chartService.chart.viewOptions().zoom;
+      const arrowTipOffset = 8;
+      // get the size of the node on screen
+      const nodeSize = this.nodeBaseSize * (item.e || 1) * zoom;
+
+      element.style.opacity = '' + 0;
+      // allow fade in and out to animate
+      element.style.transition = 'opacity 0.3s ease';
+      // scale the size of the tooltip depending on zoom level
+      const zoomTransform = Math.max(0.75, Math.min(2, zoom));
+
+      element.style.transform = `scale(${zoomTransform}`;
+      const top =
+        y - element.clientHeight - nodeSize * zoomTransform - arrowTipOffset;
+      element.style.left = `${x - (element.clientWidth / 2) * zoomTransform}px`;
+      element.style.top = `${top}px`;
+      element.style.opacity = '' + 1;
+    }
   }
 }
