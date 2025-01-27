@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { Entites } from '../@types/chart.types';
 
 interface NodeData<T> {
   type: 'node';
@@ -15,7 +16,7 @@ export type Response<T> = NodeData<T> | EdgeData;
 interface Data extends Record<string, any> {
   id: string;
   name: string;
-  entity: string;
+  entity: Entites;
 }
 
 interface Edge {
@@ -30,100 +31,131 @@ export class DataService {
   private readonly data: Data[] = [
     {
       id: 'MDC',
-      name: 'Main DC',
-      entity: 'DC',
-      location: 'Hyderabad, India',
+      name: 'FCS-Bohemia USA',
+      entity: Entites.DC,
     },
     {
       id: 'DC1',
-      name: 'Ukrain DC',
-      entity: 'DC',
-      location: 'Kyiv, Ukrain',
+      name: 'FCS-Mexico City MEX',
+      entity: Entites.DC,
     },
     {
       id: 'DC2',
-      name: 'China DC',
-      entity: 'DC',
-      location: 'Beijing, China',
+      name: 'FCS-Beijing CHN',
+      entity: Entites.DC,
     },
     {
       id: 'DC3',
-      name: 'NA RDC',
-      entity: 'DC',
-      location: 'Amsterdam, NA',
+      name: 'Patheon-Groningen NLD',
+      entity: Entites.DC,
     },
     {
       id: 'DC4',
-      name: 'Brazil RDC',
-      entity: 'DC',
-      location: 'Brasília, Brazil',
+      name: 'FCS-Sao Paulo Brasil',
+      entity: Entites.DC,
     },
     {
       id: 'DC5',
-      name: 'Germany DC',
-      entity: 'DC',
-      location: 'Berlin, Germany',
+      name: 'FCS-Horsham GBR',
+      entity: Entites.DC,
     },
 
     {
       id: 'DC6',
       name: 'DC x',
-      entity: 'DC',
-      location: 'Albany, New York',
+      entity: Entites.DC,
     },
     {
       id: 'DC7',
       name: 'Thermofisher CTD',
-      entity: 'DC',
-      location: 'Paris, France',
+      entity: Entites.DC,
     },
     {
       id: 'P1',
-      name: 'Ext Plant 1',
-      entity: 'Plant',
-      isExternal: true,
+      name: 'FCS-Allschwil CHE [1045]',
+      entity: Entites.Plant,
       order: 1,
       shipments: 2,
     },
     {
       id: 'P2',
-      name: 'Ext Plant 2',
-      entity: 'Plant',
-      isExternal: true,
-      order: 2,
+      name: 'Patheon-Cincinnati USA [1025]',
+      entity: Entites.Plant,
+      order: 1,
       shipments: 2,
     },
     {
       id: 'P3',
-      name: 'Ext Plant 3',
-      entity: 'Plant',
-      isExternal: true,
-      order: 3,
+      name: 'Patheon-Tilburg NLD [1016]',
+      entity: Entites.Plant,
+      order: 1,
       shipments: 2,
     },
     {
       id: 'P4',
-      name: 'Plant 1',
-      entity: 'Plant',
-      order: 4,
+      name: 'VVS-Lexington USA [1036]',
+      entity: Entites.Plant,
+      order: 1,
       shipments: 2,
     },
     {
       id: 'P5',
-      name: 'Plant 2',
-      entity: 'Plant',
-      order: 5,
+      name: 'FCS-Allschwil CHE [1116]',
+      entity: Entites.Plant,
+      order: 1,
       shipments: 2,
     },
     {
       id: 'P6',
-      name: 'Plant 3',
-      entity: 'Plant',
-      order: 6,
+      name: 'Patheon-Tokyo JPN [1092]',
+      entity: Entites.Plant,
+      order: 3,
       shipments: 6,
+    },
+    {
+      id: 'S1',
+      name: 'Avelos Therapeutics Inc',
+      entity: Entites.SHIPMENT,
+      customerName: 'Immutep GmbH',
+      excursion: ['Origin Delay'],
+    },
+    {
+      id: 'S2',
+      name: 'Jazz Pharmaceuticals Ireland Limited',
+      entity: Entites.SHIPMENT,
+      customerName: 'Avelos Therapeutics Inc',
+      excursion: ['Cargo Temperature'],
+    },
+    {
+      id: 'S3',
+      name: 'Immutep GmbH',
+      entity: Entites.SHIPMENT,
+      customerName: 'Immutep GmbH',
+      excursion: ['Cargo Temperature'],
+    },
+    {
+      id: 'S4',
+      name: 'Aerium Therapeutics Inc',
+      entity: Entites.SHIPMENT,
+      customerName: 'Avelos Therapeutics Inc',
+      excursion: ['Origin Delay'],
+    },
+    {
+      id: 'S5',
+      name: 'AstraZeneca Pharma Poland Sp zoo',
+      entity: Entites.SHIPMENT,
+      customerName: 'Immutep GmbH',
+      excursion: ['Origin Delay'],
+    },
+    {
+      id: 'S6',
+      name: 'Apogee Therapeutics Inc',
+      entity: Entites.SHIPMENT,
+      customerName: 'Avelos Therapeutics Inc',
     },
   ];
 
+  // customer, excursion
   private readonly edges: Edge[] = [
     {
       id1: 'MDC',
@@ -191,6 +223,53 @@ export class DataService {
       id2: 'P6',
       id: 'DC7-089-P6',
     },
+
+    {
+      id1: 'P6',
+      id2: 'S1',
+      id: 'P6-089-S1',
+    },
+    {
+      id1: 'P6',
+      id2: 'S2',
+      id: 'P6-089-S2',
+    },
+    {
+      id1: 'P6',
+      id2: 'S3',
+      id: 'P6-089-S3',
+    },
+    {
+      id1: 'P6',
+      id2: 'S4',
+      id: 'P6-089-S4',
+    },
+    {
+      id1: 'P6',
+      id2: 'S5',
+      id: 'P6-089-S5',
+    },
+    {
+      id1: 'P6',
+      id2: 'S6',
+      id: 'P6-089-S6',
+    },
+
+    // {
+    //   id1: 'S1',
+    //   id2: 'DC2',
+    //   id: 'S1-089-S1',
+    // },
+    // {
+    //   id1: 'S2',
+    //   id2: 'DC2',
+    //   id: 'S2-089-DC2',
+    // },
+    // {
+    //   id1: 'S3',
+    //   id2: 'DC2',
+    //   id: 'S3-089-DC2',
+    // },
   ];
   constructor() {}
 

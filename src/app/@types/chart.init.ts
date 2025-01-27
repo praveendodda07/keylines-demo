@@ -17,9 +17,9 @@ export const entityThemes: EntityThemes = {
     regionOCColour: 'rgba(246,247,237,0.8)',
   },
   Shipment: {
-    iconColour: 'rgb(0,172,52)',
-    countryBgColour: 'rgba(223,236,225,0.8)',
-    regionOCColour: 'rgba(236,248,237,0.8)',
+    iconColour: 'rgb(156,77,132)',
+    countryBgColour: 'rgba(237,223,235,0.8)',
+    regionOCColour: 'rgba(250,235,247,0.8)',
   },
   Organization: {
     iconColour: 'rgb(235,78,93)',

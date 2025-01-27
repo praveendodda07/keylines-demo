@@ -22,6 +22,20 @@
       </kl-components>
     </div>
   </div>
+
+  <div class="p-3 select-none">
+    <div class="text-lg">Grouping</div>
+    <select
+      name="group"
+      id="group"
+      [(ngModel)]="groupedBy"
+      (ngModelChange)="onGroupChange()"
+    >
+      <option value="none">Un Group All</option>
+      <option value="customerName">Customer</option>
+      <option value="excursion">Excursion</option>
+    </select>
+  </div>
 </div>
 <div id="tooltip-container"></div>
 <template id="tt_html">
