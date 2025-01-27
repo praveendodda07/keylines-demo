@@ -82,33 +82,45 @@ export class DataService {
       name: 'Ext Plant 1',
       entity: 'Plant',
       isExternal: true,
+      order: 1,
+      shipments: 2,
     },
     {
       id: 'P2',
       name: 'Ext Plant 2',
       entity: 'Plant',
       isExternal: true,
+      order: 2,
+      shipments: 2,
     },
     {
       id: 'P3',
       name: 'Ext Plant 3',
       entity: 'Plant',
       isExternal: true,
+      order: 3,
+      shipments: 2,
     },
     {
       id: 'P4',
       name: 'Plant 1',
       entity: 'Plant',
+      order: 4,
+      shipments: 2,
     },
     {
       id: 'P5',
       name: 'Plant 2',
       entity: 'Plant',
+      order: 5,
+      shipments: 2,
     },
     {
       id: 'P6',
       name: 'Plant 3',
       entity: 'Plant',
+      order: 6,
+      shipments: 6,
     },
   ];
 
@@ -183,13 +195,19 @@ export class DataService {
   constructor() {}
 
   getNodeData(nodeId?: string): Observable<Response<Data>[]> {
-    if (!nodeId) {
-      return of(this.mapToNodes([this.data[0]]));
-    }
+    const data = this.getData(nodeId);
+    return of(data);
+  }
 
+  getData(nodeId?: string): Response<Data>[] {
+    if (!nodeId) {
+      const data: Response<Data>[] = this.mapToNodes([this.data[0]]);
+      return data.concat(this.getData(this.data[0].id));
+    }
     const edges = this.getEdges(nodeId);
     const nodes = this.getNodes(nodeId);
-    return of([...nodes, ...edges]);
+
+    return [...nodes, ...edges];
   }
 
   getEdges(nodeId: string) {

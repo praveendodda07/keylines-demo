@@ -4,6 +4,7 @@ import {
   Chart,
   ChartOptions,
   ChartPointerEventProps,
+  Glyph,
   Link,
   LinkProperties,
   Node,
@@ -207,19 +208,18 @@ export class Proto1Component implements OnInit, AfterViewInit {
       // const g = countryGlyph !== null ? [countryGlyph] : [];
 
       let color = rTheme.iconColour;
-      if (item.d?.entity == 'Plant' && item.d?.isExternal) {
-        color = 'red';
+      let glyphs: Glyph[] = [];
+      if (item.d?.entity == 'Plant') {
+        glyphs = this.generatePlantGlyphs(item.d);
+        if (item.d?.isExternal) {
+          color = 'red';
+        }
       }
-      const g = {
-        p: 'ne',
-        e: 0.8,
-        c: 'rgb(87, 167, 115)',
-        t: ' ',
-      };
+
       nodeProps.push({
         id: item.id,
         u: undefined,
-        g: [],
+        g: glyphs,
         c: color,
         fi: {
           t: KeyLines.getFontIcon(getEntityIcon(item.d.entity)),
@@ -243,6 +243,25 @@ export class Proto1Component implements OnInit, AfterViewInit {
     });
 
     this.chartService.chart.setProperties(linkProps);
+  }
+
+  private generatePlantGlyphs(data: any): Glyph[] {
+    const shipmentsGlyph: Glyph = {
+      p: 'ne',
+      e: 1,
+      c: 'yellow',
+      t: data?.shipments || 0,
+      fc: 'black',
+    };
+
+    const orderGlyph: Glyph = {
+      p: 'se',
+      e: 1,
+      c: 'red',
+      t: data?.order || 0,
+      fc: 'white',
+    };
+    return [shipmentsGlyph, orderGlyph];
   }
 
   private handleTooltip({ id }: ChartPointerEventProps) {
@@ -272,6 +291,12 @@ export class Proto1Component implements OnInit, AfterViewInit {
       tooltipHtml = `<b>Location:</b> ${data?.['location'] || ''}`;
     }
 
+    if (entity == Entites.Plant) {
+      tooltipHtml = `
+        <div><b>Purchase Order:</b> ${data?.['order'] || 0}</div>
+        <div><b>Shipments Count:</b> ${data?.['shipments'] || 0}</div>
+      `;
+    }
     return tooltipHtml;
   }
   private closeTooltip() {
