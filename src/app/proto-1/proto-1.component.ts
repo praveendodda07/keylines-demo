@@ -368,6 +368,59 @@ export class Proto1Component implements OnInit, AfterViewInit {
       });
   }
 
+  private openedRoute: {
+    item?: Link;
+    route?: (Node | Link)[];
+  } = {};
+
+  fetchRoute(edgeId: string) {
+    this.apiService
+      .fetchRoute(edgeId)
+      .pipe(
+        map((res) =>
+          res.filter(
+            (item) => !this.data.find((dataItem) => item.id == dataItem.id)
+          )
+        )
+      )
+      .subscribe(async (res) => {
+        if (!res.length) return;
+
+        this.openedRoute.route = res;
+
+        res.forEach((item) => {
+          this.chartService.chart.setItem(item);
+        });
+
+        this.chartService.graph.load(this.chartService.chart.serialize());
+
+        this.openedRoute.item = this.chartService.chart.getItem(edgeId) as Link;
+
+        this.chartService.chart.removeItem(edgeId);
+
+        this.applyTheme();
+        this.chartService.layout('adaptive');
+      });
+  }
+
+  restoreRoute() {
+    if (!this.openedRoute.item) return;
+
+    if (this.openedRoute.item) {
+      this.chartService.chart.setItem(this.openedRoute.item);
+    }
+
+    if (this.openedRoute.route?.length) {
+      const ids = this.openedRoute.route.map((item) => item.id);
+      this.chartService.chart.removeItem(ids);
+    }
+
+    this.openedRoute = {};
+
+    this.chartService.graph.load(this.chartService.chart.serialize());
+    this.applyTheme();
+    this.chartService.layout('adaptive');
+  }
   async afterCombine() {
     return this.chartService.layout('adaptive').then(() => {
       this.foregroundSelection([]);
@@ -407,7 +460,22 @@ export class Proto1Component implements OnInit, AfterViewInit {
     }
 
     if (name == 'double-click') {
-      this.openNode();
+      this.restoreRoute();
+
+      const [id] = this.chartService.chart.selection();
+
+      if (!id) return;
+      const item = this.chartService.chart.getItem(id);
+
+      if (!item) return;
+
+      if (item.type == 'link') {
+        this.fetchRoute(id);
+      }
+
+      if (item.type == 'node') {
+        this.fetchNodes(id);
+      }
     }
 
     if (name == 'view-change') {
@@ -428,12 +496,6 @@ export class Proto1Component implements OnInit, AfterViewInit {
     if (name == 'drag-move') {
       this.updateTooltipPosition();
     }
-  }
-
-  openNode() {
-    const [id] = this.chartService.chart.selection();
-    if (!id) return;
-    this.fetchNodes(id);
   }
 
   onSelection() {

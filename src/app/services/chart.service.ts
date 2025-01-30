@@ -41,6 +41,8 @@ export class ChartService {
     'fa-globe-americas': { dy: 0, e: 1.4 },
     'fa-warehouse': { dy: 0, e: 0.8 },
     'fa-industry': { dy: 0, e: 0.8 },
+    'fa-truck-moving': { dy: 0, e: 0.8 },
+    'fa-plane': { dy: 0, e: 0.8 },
   };
 
   get chart() {

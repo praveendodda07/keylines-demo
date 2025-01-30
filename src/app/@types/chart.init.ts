@@ -8,6 +8,8 @@ export const entityIcons: EntityIcons = {
   Status: 'fa-question',
   DC: 'fa-warehouse',
   Plant: 'fa-industry',
+  Road: 'fa-truck-moving',
+  Plane: 'fa-plane',
   default: 'fa-question',
 };
 export const entityThemes: EntityThemes = {
@@ -45,6 +47,16 @@ export const entityThemes: EntityThemes = {
     iconColour: 'rgb(0,172,52)',
     countryBgColour: 'rgba(223,236,225,0.8)',
     regionOCColour: 'rgba(236,248,237,0.8)',
+  },
+  Road: {
+    iconColour: 'rgb(156,77,132)',
+    countryBgColour: 'rgba(237,223,235,0.8)',
+    regionOCColour: 'rgba(250,235,247,0.8)',
+  },
+  Plane: {
+    iconColour: 'rgb(235,78,93)',
+    countryBgColour: 'rgba(237,225,224,0.8)',
+    regionOCColour: 'rgba(249,237,236,0.8)',
   },
   default: {
     iconColour: 'rgb(146,148,184)',

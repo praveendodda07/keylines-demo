@@ -8,6 +8,8 @@ export enum Entites {
   STATUS = 'Status',
   DC = 'DC',
   Plant = 'Plant',
+  Travel_Road = 'Road',
+  Travel_Plane = 'Plane',
 }
 
 export interface EntityTheme {

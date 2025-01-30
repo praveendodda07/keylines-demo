@@ -13,7 +13,7 @@ interface EdgeData extends Edge {
 
 export type Response<T> = NodeData<T> | EdgeData;
 
-interface Data extends Record<string, any> {
+export interface Data extends Record<string, any> {
   id: string;
   name: string;
   entity: Entites;
@@ -155,6 +155,53 @@ export class DataService {
     },
   ];
 
+  private readonly routeData: (Data | Edge)[] = [
+    {
+      id: 'R1',
+      name: 'Newark',
+      entity: Entites.Travel_Road,
+      start: 'DC7',
+      end: 'R2',
+      isRoute: true,
+    },
+    {
+      id: 'R2',
+      name: '',
+      entity: Entites.Travel_Plane,
+      start: 'R1',
+      end: 'R3',
+      isRoute: true,
+    },
+    {
+      id: 'R3',
+      name: 'Sao Polo',
+      entity: Entites.Travel_Road,
+      start: 'R2',
+      end: 'P2',
+      isRoute: true,
+    },
+    {
+      id: 'DC7-809-R1',
+      id1: 'DC7',
+      id2: 'R1',
+    },
+    {
+      id: 'R1-809-R2',
+      id1: 'R1',
+      id2: 'R2',
+    },
+    {
+      id: 'R2-809-R3',
+      id1: 'R2',
+      id2: 'R3',
+    },
+    {
+      id: 'R3-809-P2',
+      id1: 'R3',
+      id2: 'P2',
+    },
+  ];
+
   // customer, excursion
   private readonly edges: Edge[] = [
     {
@@ -275,6 +322,21 @@ export class DataService {
 
   getNodeData(nodeId?: string): Observable<Response<Data>[]> {
     const data = this.getData(nodeId);
+    return of(data);
+  }
+
+  getRouteData(edgeId: string) {
+    let data: Response<Data>[] = [];
+    if (edgeId == 'DC7-089-P2') {
+      const nodes = this.mapToNodes(
+        this.routeData.filter((item) => (item as Data)?.['isRoute']) as Data[]
+      );
+      const edges = this.mapToEdges(
+        this.routeData.filter((item) => (item as Edge).id1) as Edge[]
+      );
+      data = [...nodes, ...edges];
+    }
+
     return of(data);
   }
 
