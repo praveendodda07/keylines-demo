@@ -12,6 +12,7 @@ import {
 
 import type * as kl from 'keylines/esm';
 import KeyLines from 'keylines/esm';
+import { NgClass, NgStyle } from '@angular/common';
 
 @Injectable()
 export class KlComponentsService {
@@ -31,8 +32,10 @@ export class KlComponentsService {
 }
 
 @Component({
-  selector: 'kl-component',
-  template: '<div #container [ngClass]="containerClass" [ngStyle]="style"></div>'
+    selector: 'kl-component',
+    template: '<div #container [ngClass]="containerClass" [ngStyle]="style"></div>',
+    standalone: true,
+    imports: [NgClass, NgStyle]
 })
 export class KlComponent implements OnChanges, OnDestroy {
   @Input() id: string = ""; //optional
@@ -122,8 +125,9 @@ export class KlComponent implements OnChanges, OnDestroy {
 }
 
 @Component({
-  selector: 'kl-components',
-  template: '<ng-content></ng-content>'
+    selector: 'kl-components',
+    template: '<ng-content></ng-content>',
+    standalone: true
 })
 export class KlComponents implements AfterViewInit {
   @Input('klImagesPath') pathToImages = ''; // optional

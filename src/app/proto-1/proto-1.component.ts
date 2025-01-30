@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { ChartService } from '../services/chart.service';
 import {
   Chart,
   ChartOptions,
@@ -12,16 +11,21 @@ import {
   Node,
   NodeProperties,
 } from 'keylines';
+import { ChartService } from '../services/chart.service';
 import { theme } from '../combo/combo2-data';
 import { getEntityIcon, getEntityTheme } from './data';
 import { ChartEvents, Entites, NodeTooltip } from '../@types/chart.types';
 import { ProtoApiService } from '../services/proto-api.service';
 import { map } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { KlComponents, KlComponent } from '../../angular-keylines';
 
 @Component({
   selector: 'app-proto-1',
   templateUrl: './proto-1.component.html',
   styleUrl: './proto-1.component.scss',
+  standalone: true,
+  imports: [KlComponents, KlComponent, FormsModule],
 })
 export class Proto1Component implements OnInit, AfterViewInit {
   private chartService!: ChartService;

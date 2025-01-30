@@ -1287,3 +1287,14 @@
 input[type="button"] {
   border: 1px solid;
 }
+@font-face {
+  font-family: "Font Awesome 5 Free Solid";
+  font-style: normal;
+  font-weight: 900;
+  src: url("./assets/fonts/fontAwesome5/fa-solid-900.woff2") format("woff2");
+}
+.fa,
+.fas {
+  font-family: "Font Awesome 5 Free Solid";
+  font-weight: 900;
+}
