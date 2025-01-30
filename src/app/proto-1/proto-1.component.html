@@ -1,6 +1,6 @@
-<div class="chart-wrapper demo-cols" style="display: flex">
+<div class="chart-wrapper relative demo-cols" style="display: flex">
   <div
-    class="tab-content-panel flex1"
+    class="tab-content-panel lhs flex1"
     id="lhs"
     data-tab-group="rhs"
     style="flex-grow: 1"
@@ -23,18 +23,23 @@
     </div>
   </div>
 
-  <div class="p-3 select-none">
-    <div class="text-lg">Grouping</div>
-    <select
-      name="group"
-      id="group"
-      [(ngModel)]="groupedBy"
-      (ngModelChange)="onGroupChange()"
-    >
-      <option value="none">Un Group All</option>
-      <option value="customerName">Customer</option>
-      <option value="excursion">Excursion</option>
-    </select>
+  <div class="p-3 select-none rhs">
+    <div class="text-xl">Filters:</div>
+    <hr />
+    @if(isShipmentsShown){
+    <div>
+      <div class="text-lg">Grouping</div>
+      <mat-radio-group
+        [(ngModel)]="groupedBy"
+        (ngModelChange)="onGroupChange()"
+        class="flex flex-col"
+      >
+        <mat-radio-button value="none">Un Group All</mat-radio-button>
+        <mat-radio-button value="customerName">Customer</mat-radio-button>
+        <mat-radio-button value="excursion">Excursion</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    }
   </div>
 </div>
 <div id="tooltip-container"></div>

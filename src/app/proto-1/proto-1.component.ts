@@ -1,4 +1,9 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import {
   Chart,
   ChartOptions,
@@ -19,13 +24,20 @@ import { ProtoApiService } from '../services/proto-api.service';
 import { map } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { KlComponents, KlComponent } from '../../angular-keylines';
+import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 
 @Component({
   selector: 'app-proto-1',
   templateUrl: './proto-1.component.html',
   styleUrl: './proto-1.component.scss',
   standalone: true,
-  imports: [KlComponents, KlComponent, FormsModule],
+  imports: [
+    KlComponents,
+    KlComponent,
+    FormsModule,
+    MatRadioButton,
+    MatRadioGroup,
+  ],
 })
 export class Proto1Component implements OnInit, AfterViewInit {
   private chartService!: ChartService;
@@ -35,6 +47,7 @@ export class Proto1Component implements OnInit, AfterViewInit {
   private templateHtml!: string;
   private viewWidth!: number;
   private viewHeight!: number;
+  public isShipmentsShown = true;
 
   public tooltip: NodeTooltip = {
     id: null,
@@ -45,7 +58,10 @@ export class Proto1Component implements OnInit, AfterViewInit {
 
   public groupedBy: 'customerName' | 'excursion' | 'none' = 'none';
 
-  constructor(private apiService: ProtoApiService) {
+  constructor(
+    private apiService: ProtoApiService,
+    private cdr: ChangeDetectorRef
+  ) {
     this.chartService = new ChartService();
   }
 
@@ -131,6 +147,14 @@ export class Proto1Component implements OnInit, AfterViewInit {
         }
       }
     );
+
+    if (!shipmentCombos.length) {
+      setTimeout(() => {
+        this.groupedBy = 'none';
+      }, 100);
+
+      return;
+    }
 
     shipmentCombos.forEach((combo) => {
       const nodes = this.chartService.chart.combo().info(combo.id)?.nodes || [];
@@ -330,6 +354,8 @@ export class Proto1Component implements OnInit, AfterViewInit {
         if (nodeId) {
           const node = this.chartService.chart.getItem(nodeId);
           if (node?.d.entity == Entites.Plant) {
+            this.isShipmentsShown = true;
+            this.cdr.detectChanges();
             const shipments = res.filter(
               (item) => item.type == 'node' && item.d.entity == Entites.SHIPMENT
             ) as Node[];

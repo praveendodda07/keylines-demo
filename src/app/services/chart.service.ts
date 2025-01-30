@@ -15,6 +15,7 @@ export class ChartService {
       links: false,
       panAtBoundary: false,
     },
+    overview: { icon: false },
     truncateLabels: { maxLength: 15 },
     // imageAlignment: this.imageAlignment,
     //   selectedNode: theme.selectedNode,
@@ -25,11 +26,6 @@ export class ChartService {
     linkEnds: { avoidLabels: false },
     minZoom: 0.02,
     handMode: true,
-
-    watermark: {
-      t: 'ParkourSC',
-      a: 'top',
-    },
     zoom: {
       adaptiveStyling: true,
     },
